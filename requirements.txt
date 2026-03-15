@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+pandas
+openpyxl
+python-jose[cryptography]
+bcrypt
+python-dotenv
+pydantic
+groq
+sentence-transformers
+python-multipart
+google-genai
+chromadb
+httpx
+dnspython

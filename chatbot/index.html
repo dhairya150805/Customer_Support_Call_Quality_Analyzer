@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KenexAI — Chatbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d0f14;
+      --surface:    #13161e;
+      --surface2:   #1c2030;
+      --border:     #252a38;
+      --accent:     #5b6ef5;
+      --accent2:    #7c3aed;
+      --text:       #e8eaf2;
+      --text-dim:   #7b82a0;
+      --user-bg:    linear-gradient(135deg, #5b6ef5, #7c3aed);
+      --bot-bg:     #1c2030;
+      --glow:       rgba(91,110,245,.18);
+      --radius:     16px;
+      --font:       'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    /* ── Layout ── */
+    .shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: var(--user-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 18px var(--glow);
+      flex-shrink: 0;
+    }
+
+    .header-info h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .header-info p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 2s infinite;
+      margin-left: auto;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .4; }
+    }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ── Message rows ── */
+    .msg-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      animation: fadeUp .3s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .user .avatar  { background: var(--user-bg); box-shadow: 0 0 14px var(--glow); }
+    .bot  .avatar  { background: var(--surface2); border: 1px solid var(--border); }
+
+    .bubble {
+      max-width: 72%;
+      padding: 13px 17px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      line-height: 1.65;
+      word-break: break-word;
+      position: relative;
+    }
+    .user .bubble {
+      background: var(--user-bg);
+      border-bottom-right-radius: 4px;
+      color: #fff;
+      box-shadow: 0 4px 20px var(--glow);
+    }
+    .bot .bubble {
+      background: var(--bot-bg);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* tags */
+    .tag-row { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 99px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .tag-rag  { background: rgba(91,110,245,.2); color: #818cf8; border: 1px solid rgba(91,110,245,.3); }
+    .tag-llm  { background: rgba(124,58,237,.2); color: #a78bfa; border: 1px solid rgba(124,58,237,.3); }
+    .tag-data { background: rgba(34,197,94,.12);  color: #4ade80;  border: 1px solid rgba(34,197,94,.2); }
+    .tag-gen  { background: rgba(251,191,36,.12); color: #fcd34d;  border: 1px solid rgba(251,191,36,.2); }
+
+    /* sources accordion */
+    .sources-toggle {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      user-select: none;
+    }
+    .sources-toggle:hover { text-decoration: underline; }
+    .sources-list {
+      margin-top: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sources-list.open { display: flex; }
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .source-card strong { color: var(--text); }
+
+    /* typing indicator */
+    .typing .bubble { padding: 14px 18px; }
+    .dots { display: flex; gap: 5px; align-items: center; }
+    .dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      animation: bounce 1.2s infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .2s; }
+    .dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); opacity:.5; }
+      40%          { transform: translateY(-6px); opacity:1; }
+    }
+
+    /* welcome card */
+    .welcome {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px; text-align: center;
+      padding: 40px 20px;
+      animation: fadeUp .4s ease both;
+    }
+    .welcome .icon { font-size: 52px; }
+    .welcome h2 { font-size: 22px; font-weight: 700; }
+    .welcome p  { font-size: 14px; color: var(--text-dim); max-width: 380px; line-height: 1.6; }
+    .suggestions {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 8px;
+    }
+    .suggest-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: var(--font);
+    }
+    .suggest-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+      background: rgba(91,110,245,.1);
+    }
+
+    /* ── Input bar ── */
+    .input-bar {
+      padding: 16px 24px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .input-wrap {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 10px 10px 18px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(91,110,245,.12);
+    }
+    textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    textarea::placeholder { color: var(--text-dim); }
+
+    #send-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--user-bg);
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 0 12px var(--glow);
+    }
+    #send-btn:hover:not(:disabled) { opacity: .85; transform: scale(1.05); }
+    #send-btn:disabled { opacity: .4; cursor: not-allowed; }
+    #send-btn svg { width: 17px; height: 17px; fill: #fff; }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">🤖</div>
+    <div class="header-info">
+      <h1>KenexAI Assistant</h1>
+      <p>Hybrid RAG + LLM · Support Analytics</p>
+    </div>
+    <div class="status-dot" title="Backend online"></div>
+  </header>
+
+  <!-- Messages -->
+  <div id="messages">
+    <div class="welcome" id="welcome">
+      <div class="icon">✨</div>
+      <h2>Hey, I'm KenexAI</h2>
+      <p>Ask me about support analytics, call quality, agent performance — or anything else.</p>
+      <div class="suggestions">
+        <button class="suggest-btn" onclick="sendSuggestion(this)">What are the most common complaints today?</button>
+        <button class="suggest-btn" onclick="sendSuggestion(this)">Which agents have the lowest scores?</button>
+        <button class="suggest-btn" onclick="sendSuggestion(this)">Summarise recent negative sentiment calls</button>
+        <button class="suggest-btn" onclick="sendSuggestion(this)">What is machine learning?</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-bar">
+    <div class="input-wrap">
+      <textarea id="input" rows="1" placeholder="Ask anything…" maxlength="2000"></textarea>
+      <button id="send-btn" onclick="sendMessage()" disabled>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+        </svg>
+      </button>
+    </div>
+    <p class="hint">Enter ↵ to send &nbsp;·&nbsp; Shift+Enter for new line &nbsp;·&nbsp; Backend: <code>localhost:8001</code></p>
+  </div>
+
+</div>
+
+<script>
+  const API = 'http://localhost:8001/chat';
+  const messagesEl = document.getElementById('messages');
+  const inputEl    = document.getElementById('input');
+  const sendBtn    = document.getElementById('send-btn');
+
+  // ── auto-resize textarea ──────────────────────────────────────────────────
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+    sendBtn.disabled = !inputEl.value.trim();
+  });
+
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage();
+    }
+  });
+
+  // ── helpers ──────────────────────────────────────────────────────────────
+  function scrollBottom() {
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+  }
+
+  function hideWelcome() {
+    const w = document.getElementById('welcome');
+    if (w) w.remove();
+  }
+
+  function appendRow(role, contentHTML) {
+    const row = document.createElement('div');
+    row.className = `msg-row ${role}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = role === 'user' ? '🧑' : '🤖';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.innerHTML = contentHTML;
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    scrollBottom();
+    return bubble;
+  }
+
+  function showTyping() {
+    const row = document.createElement('div');
+    row.className = 'msg-row bot typing';
+    row.id = 'typing';
+    row.innerHTML = `
+      <div class="avatar">🤖</div>
+      <div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div>
+    `;
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  function buildBotBubble(data) {
+    const modeTag = data.mode === 'RAG'
+      ? `<span class="tag tag-rag">RAG</span>`
+      : `<span class="tag tag-llm">LLM</span>`;
+    const intentTag = data.intent === 'SUPPORT_DATA'
+      ? `<span class="tag tag-data">Support Data</span>`
+      : `<span class="tag tag-gen">General</span>`;
+
+    let html = `<div>${escapeHtml(data.answer)}</div>`;
+    html += `<div class="tag-row">${modeTag}${intentTag}</div>`;
+
+    if (data.sources && data.sources.length > 0) {
+      const sourceCards = data.sources.map(s => `
+        <div class="source-card">
+          <strong>${s.issue || 'Issue N/A'}</strong> &nbsp;·&nbsp;
+          Sentiment: ${s.sentiment || 'N/A'} &nbsp;·&nbsp;
+          Agent: ${s.agent_id || 'N/A'} &nbsp;·&nbsp;
+          Score: ${s.quality_score ?? 'N/A'}
+        </div>
+      `).join('');
+
+      html += `
+        <div class="sources-toggle" onclick="toggleSources(this)">
+          📄 ${data.sources.length} source${data.sources.length > 1 ? 's' : ''} — click to expand ▸
+        </div>
+        <div class="sources-list">${sourceCards}</div>
+      `;
+    }
+    return html;
+  }
+
+  function toggleSources(el) {
+    const list = el.nextElementSibling;
+    list.classList.toggle('open');
+    el.textContent = list.classList.contains('open')
+      ? `📄 ${list.children.length} source${list.children.length > 1 ? 's' : ''} — click to collapse ▾`
+      : `📄 ${list.children.length} source${list.children.length > 1 ? 's' : ''} — click to expand ▸`;
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>');
+  }
+
+  // ── send ─────────────────────────────────────────────────────────────────
+  async function sendMessage() {
+    const question = inputEl.value.trim();
+    if (!question) return;
+
+    hideWelcome();
+
+    // reset input
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    // show user message
+    appendRow('user', escapeHtml(question));
+    showTyping();
+
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      const data = await res.json();
+
+      removeTyping();
+      appendRow('bot', buildBotBubble(data));
+
+    } catch (err) {
+      removeTyping();
+      appendRow('bot', `
+        <div style="color:#f87171">
+          ⚠️ Could not reach the backend.<br>
+          Make sure the server is running:<br>
+          <code style="font-size:12px;color:#fca5a5">uvicorn main:app --reload --port 8001</code>
+        </div>
+      `);
+    }
+
+    inputEl.focus();
+  }
+
+  function sendSuggestion(btn) {
+    inputEl.value = btn.textContent.trim();
+    sendBtn.disabled = false;
+    sendMessage();
+  }
+
+  inputEl.focus();
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+contact_id,agent_id,agent_name,conversation,duration
+C-1001,AG-001,Sarah Mitchell,"Agent: Thank you for calling TechCo support, this is Sarah. How can I help you today?
+Customer: Hi Sarah, I've been trying to access my account for two days now and I keep getting an error saying my password is incorrect. I reset it three times already!
+Agent: I'm so sorry to hear that, that must be incredibly frustrating. Let me pull up your account details right away.
+Customer: Yes it's very frustrating. I have important files I need to access.
+Agent: I completely understand. I can see your account here. It looks like there's a security flag that was triggered due to multiple failed login attempts. I'm going to clear that for you now.
+Customer: Oh okay. Will that fix it?
+Agent: Yes, it should resolve the issue immediately. I've cleared the flag and reset your access. Can you try logging in now while I stay on the line?
+Customer: Yes let me try... It worked! Thank you so much Sarah!
+Agent: Wonderful! I'm so glad we got that sorted. Is there anything else I can help you with today?
+Customer: No that's everything, you were really helpful!
+Agent: It was my pleasure. Have a great day!",8.5
+C-1002,AG-002,James Okafor,"Agent: Good afternoon, TechCo support, James speaking.
+Customer: Finally someone picked up! I've been on hold for 45 minutes! This is absolutely ridiculous!
+Agent: I sincerely apologize for the wait time, I completely understand your frustration.
+Customer: My internet has been down since yesterday morning! I work from home and I lost a whole day of work!
+Agent: I'm very sorry about that. Let me check your connection status... I can see there was a regional outage in your area that affected multiple customers.
+Customer: Why wasn't I informed?! I should have received an email or something!
+Agent: You're absolutely right, and I apologize for that communication gap. The outage has been resolved but I want to make sure your specific connection is stable.
+Customer: Is it fixed now?
+Agent: I'm running diagnostics now... Yes, I can confirm your line is now fully active. I'm also going to apply a 5-day service credit to your account for the inconvenience.
+Customer: Alright. I appreciate the credit but please make sure this doesn't happen again.
+Agent: I completely understand and I've flagged your account for priority notifications for any future outages. Is there anything else?
+Customer: No, just don't let this happen again.",15.2
+C-1003,AG-003,Priya Sharma,"Agent: Hello welcome to TechCo, how can I assist you?
+Customer: Hi, I have a question about my bill. There's a charge here for 49 dollars that I don't recognize.
+Agent: Of course, I'd be happy to help clarify that for you. Can I get your account number?
+Customer: Sure it's TC-889234.
+Agent: Thank you. I can see the charge here — it's for the premium add-on package that was activated on your account on March 1st.
+Customer: I never asked for that! I didn't authorize any premium package!
+Agent: I understand your concern. Let me investigate this further... It appears this was added during a promotional campaign. I apologize if this wasn't communicated clearly.
+Customer: So can you remove it and refund me?
+Agent: Yes, I can remove it effective today and process a full refund of $49 back to your payment method. It should appear within 5-7 business days.
+Customer: Okay that's fine. I just don't want any unauthorized charges in the future.
+Agent: Absolutely, I've added a note to your account requiring manual authorization for any add-ons. You're all set!
+Customer: Thank you.",11.3
+C-1004,AG-004,Carlos Rivera,"Agent: TechCo support, Carlos here, how may I help?
+Customer: Yeah my service is terrible. The internet keeps dropping every few hours. This has been going on for a week.
+Agent: I apologize for the inconvenience. Let me take a look at your connection logs.
+Customer: It's really affecting my kids' school work too. Online classes keep disconnecting.
+Agent: I understand, that's a serious disruption. I can see frequent disconnections in the logs. This looks like it could be a line quality issue or a faulty router.
+Customer: So what do we do about it?
+Agent: I'd like to send a technician to your location to inspect the line and replace the router if needed. Are you available tomorrow between 9am and 1pm?
+Customer: I suppose so. Will this definitely fix the problem?
+Agent: The technician will run full diagnostics and replace any faulty equipment. If the issue persists after that we will escalate to our network team at no extra cost.
+Customer: Alright. I hope it gets sorted this time.
+Agent: I understand your frustration and I assure you we'll get this resolved. You'll receive a confirmation SMS with the technician's details.",13.7
+C-1005,AG-005,Emily Zhang,"Agent: Hello this is TechCo support, Emily speaking.
+Customer: Hi Emily, I want to upgrade my current plan to the business plan. Can you help with that?
+Agent: Of course! I'd love to help you with that upgrade. Can I confirm which plan you're currently on?
+Customer: I'm on the standard home plan.
+Agent: Great. The business plan includes 1Gbps speeds, a static IP, 24/7 priority support, and unlimited data. It's $89 per month compared to your current $45.
+Customer: That sounds good. Will there be any interruption to my service during the upgrade?
+Agent: No interruption at all. The upgrade is done remotely and takes effect immediately. Your billing will be prorated for the current month.
+Customer: Perfect. Let's go ahead with it.
+Agent: Wonderful! I've processed the upgrade. You now have business plan access. You should notice improved speeds within the next 15 minutes.
+Customer: Excellent, thank you Emily!
+Agent: My pleasure! Enjoy your new plan and don't hesitate to call if you need anything.",7.2
